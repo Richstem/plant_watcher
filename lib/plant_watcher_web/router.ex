@@ -19,6 +19,7 @@ defmodule PlantWatcherWeb.Router do
 
     get "/", PageController, :home
     get "/about", PageController, :about
+    live "/dashboard", TemperatureLive
   end
 
   # Other scopes may use custom stacks.
