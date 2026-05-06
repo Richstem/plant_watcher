@@ -30,14 +30,17 @@ defmodule PlantWatcherWeb.TemperatureLive do
 
   def render(assigns) do
     ~H"""
-    <div>
-      <div class="text-center mt-10">
-        <h1 class="text-2xl font-bold">Device Temperature</h1>
-        <div class="text-6xl mt-4 font-mono text-green-600">
-          <%= @current_temp %>
-        </div>
-      </div>
+    <style>
+      .stats-wrapper {
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+      }
+    </style>
 
+    <div class="stats-wrapper">
+
+      <!--Soil temp section -->
       <div class="text-center mt-10">
         <h1 class="text-2xl font-bold">Soil Temperature</h1>
         <div class="text-6xl mt-4 font-mono text-green-600">
@@ -45,20 +48,32 @@ defmodule PlantWatcherWeb.TemperatureLive do
         </div>
       </div>
 
+        <!--Soil moisture section -->
       <div class="text-center mt-10">
-        <h1 class="text-2xl font-bold">Moisture Reading</h1>
+          <h1 class="text-2xl font-bold">Moisture Reading</h1>
+          <div class="text-6xl mt-4 font-mono text-green-600">
+            <%= @soil_moisture %>
+          </div>
+      </div>
+
+      <!--Device temp section -->
+      <div class="text-center mt-10">
+        <h1 class="text-2xl font-bold">Device Temperature</h1>
         <div class="text-6xl mt-4 font-mono text-green-600">
-          <%= @soil_moisture %>
+          <%= @current_temp %>
         </div>
       </div>
 
-    <button
+      <button
       phx-click="pump_water"
       phx-value-duration="15"
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Water your plants
     </button>
+      </div>
+
     </div>
+
     """
   end
 end

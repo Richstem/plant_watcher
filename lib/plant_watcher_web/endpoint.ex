@@ -15,7 +15,7 @@ defmodule PlantWatcherWeb.Endpoint do
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
-  # adding our UserSocket here for the device:temp channel (for now)
+  # adding our UserSocket here for the device:temp channel
   socket "/socket", PlantWatcherWeb.UserSocket,
     websocket: true,
     longpoll: false
