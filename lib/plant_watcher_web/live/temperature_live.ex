@@ -12,6 +12,7 @@ defmodule PlantWatcherWeb.TemperatureLive do
     |> assign(:current_temp, "Waiting...")
     |> assign(:soil_temp, "Waiting...")
     |> assign(:soil_moisture, "Waiting...")
+    |> assign(selected_duration: 10, error_message: nil)
     }
   end
 
@@ -25,64 +26,107 @@ defmodule PlantWatcherWeb.TemperatureLive do
     }
   end
 
-  # Hande
-  def handle_event("pump_water", {:duration, duration }, socket) do
+  def handle_event("update_duration", %{"duration" => duration}, socket) do
+    user_selected_duration = String.to_integer(duration)
+    {:noreply, assign(socket, %{selected_duration: user_selected_duration})}
+  end
 
+  # Handle button click. Broadcast command to endpoint
+  def handle_event("pump_water", %{ "code" => "9193", "duration" => duration_str }, socket) do
+    duration = String.to_integer(duration_str)
+    topic = "device:temp"
+
+    PlantWatcherWeb.Endpoint.broadcast(topic, "pump_water", %{duration: duration})
+
+    {:noreply, assign(socket, error_message: nil)}
+  end
+
+  def handle_event("pump_water", _params, socket) do
+    {:noreply, assign(socket, error_message: "Invalid Code!")}
+  end
+
+  def handle_event("clear_err_on_type", _params, socket) do
+    {:noreply, assign(socket, error_message: "")}
   end
 
   def render(assigns) do
     ~H"""
-    <style>
-      .stats-wrapper {
-        display: flex;
-        justify-content: space-evenly;
-        flex-wrap: wrap;
-      }
-      .btn-wrapper {
-        display: flex;
-        justify-content: center;
 
-      }
-    </style>
+      <section>
+          <style>
+          .stats-wrapper {
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+          }
+          .btn-wrapper {
+            display: flex;
+            justify-content: center;
 
-    <div>
-      <div class="stats-wrapper">
+          }
+        </style>
 
-        <!--Soil temp section -->
-        <div class="text-center mt-10">
-          <h1 class="text-2xl font-bold">Soil Temperature</h1>
-          <div class="text-6xl mt-4 font-mono text-green-600">
-            <%= @soil_temp %>
-          </div>
-        </div>
+        <div>
+          <div class="stats-wrapper">
 
-          <!--Soil moisture section -->
-        <div class="text-center mt-10">
-            <h1 class="text-2xl font-bold">Moisture Reading</h1>
-            <div class="text-6xl mt-4 font-mono text-green-600">
-              <%= @soil_moisture %>
+            <!--Soil temp section -->
+            <div class="text-center mt-10">
+              <h1 class="text-2xl font-bold">Soil Temperature</h1>
+              <div class="text-6xl mt-4 font-mono text-green-600">
+                <%= @soil_temp %>
+              </div>
             </div>
-        </div>
 
-        <!--Device temp section -->
-        <div class="text-center mt-10">
-          <h1 class="text-2xl font-bold">Device Temperature</h1>
-          <div class="text-6xl mt-4 font-mono text-green-600">
-            <%= @current_temp %>
+              <!--Soil moisture section -->
+            <div class="text-center mt-10">
+                <h1 class="text-2xl font-bold">Moisture Reading</h1>
+                <div class="text-6xl mt-4 font-mono text-green-600">
+                  <%= @soil_moisture %>
+                </div>
+            </div>
+
+            <!--Device temp section -->
+            <div class="text-center mt-10">
+              <h1 class="text-2xl font-bold">Device Temperature</h1>
+              <div class="text-6xl mt-4 font-mono text-green-600">
+                <%= @current_temp %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pump Water Form -->
+
+          <div class="my-10 p-6 bg-gray-700 rounded-lg shadow-md max-w-md mx-auto">
+            <.form for={%{}} phx-submit="pump_water" class="space-y-4">
+              <div>
+                <label class="block text-sm text-white font-bold">Enter Code</label>
+                <input type="password"
+                  name="code"
+                  phx-change="clear_err_on_type"
+                  class="w-full rounded border-red-300 text-white"
+                  placeholder="Enter Code"
+                  maxlength="10"
+                  required />
+                <%= if @error_message do %>
+                  <p class="text-red-500 text-left mt-2"><%= @error_message %></p>
+                <% end %>
+              </div>
+              <div>
+                <label class="block text-sm text-white font-bold">Pump duration: {@selected_duration} seconds</label>
+                <input type="range" name="duration" min="5" max="20" step="1"
+                    value={@selected_duration} phx-change="update_duration"
+                    class="w-full text-white" />
+              </div>
+              <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Authorize and Pump!
+              </button>
+            </.form>
+
+
           </div>
         </div>
-      </div>
-      <div class="btn-wrapper my-10">
-        <button
-          phx-click="pump_water"
-          phx-value-duration="15"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Water your plants
-        </button>
-      </div>
-
-
-    </div>
+      </section>
 
     """
   end
