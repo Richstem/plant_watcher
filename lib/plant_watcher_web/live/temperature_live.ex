@@ -12,7 +12,7 @@ defmodule PlantWatcherWeb.TemperatureLive do
     |> assign(:current_temp, "Waiting...")
     |> assign(:soil_temp, "Waiting...")
     |> assign(:soil_moisture, "Waiting...")
-    |> assign(selected_duration: 10, error_message: nil)
+    |> assign(selected_duration: 10, error_message: nil, success_message: nil)
     }
   end
 
@@ -31,22 +31,25 @@ defmodule PlantWatcherWeb.TemperatureLive do
     {:noreply, assign(socket, %{selected_duration: user_selected_duration})}
   end
 
-  # Handle button click. Broadcast command to endpoint
-  def handle_event("pump_water", %{ "code" => "9193", "duration" => duration_str }, socket) do
-    duration = String.to_integer(duration_str)
-    topic = "device:temp"
+  # Check env for pump water code, validate and broadcast.
+  def handle_event("pump_water", %{ "code" => code, "duration" => duration_str}, socket) do
+    valid_code = Application.get_env(:plant_watcher, :pump_water_code)
 
-    PlantWatcherWeb.Endpoint.broadcast(topic, "pump_water", %{duration: duration})
+    case code do
+      ^valid_code ->
+        duration = String.to_integer((duration_str))
+        topic = "device:temp"
 
-    {:noreply, assign(socket, error_message: nil)}
-  end
+        PlantWatcherWeb.Endpoint.broadcast(topic, "pump_water", %{duration: duration})
+        {:noreply, assign(socket, %{error_message: nil, success_message: "Success! pumping for #{duration_str} seconds"})}
+      _ ->
+        {:noreply, assign(socket, %{error_message: "Invalid Code!", success_message: "" })}
 
-  def handle_event("pump_water", _params, socket) do
-    {:noreply, assign(socket, error_message: "Invalid Code!")}
+    end
   end
 
   def handle_event("clear_err_on_type", _params, socket) do
-    {:noreply, assign(socket, error_message: "")}
+    {:noreply, assign(socket, %{error_message: "", success_message: ""})}
   end
 
   def render(assigns) do
@@ -109,6 +112,9 @@ defmodule PlantWatcherWeb.TemperatureLive do
                   required />
                 <%= if @error_message do %>
                   <p class="text-red-500 text-left mt-2"><%= @error_message %></p>
+                <% end %>
+                <%= if @success_message do %>
+                  <p class="text-green-500 text-left mt-2"><%= @success_message %></p>
                 <% end %>
               </div>
               <div>
