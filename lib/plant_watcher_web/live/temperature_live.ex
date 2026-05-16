@@ -20,8 +20,8 @@ defmodule PlantWatcherWeb.TemperatureLive do
   def handle_info({:new_stats, stats}, socket) do
     {:noreply,
     socket
-    |> assign(:current_temp, stats.temp)
-    |> assign(:soil_temp, stats.soil_temp)
+    |> assign(:current_temp, stats.temp<>" F")
+    |> assign(:soil_temp, stats.soil_temp<>" F")
     |> assign(:soil_moisture, stats.soil_moisture)
     }
   end
