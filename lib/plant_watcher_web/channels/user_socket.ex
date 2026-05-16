@@ -10,5 +10,4 @@ defmodule PlantWatcherWeb.UserSocket do
 
   @impl true
   def id(_id), do: nil
-
 end

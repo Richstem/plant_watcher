@@ -19,10 +19,10 @@ defmodule PlantWatcherWeb.Router do
 
     get "/", PageController, :home
     get "/about", PageController, :about
+
     live_session(:dashboard_layout, layout: {PlantWatcherWeb.Layouts, :dashboard}) do
       live "/dashboard", TemperatureLive
     end
-
   end
 
   # Other scopes may use custom stacks.

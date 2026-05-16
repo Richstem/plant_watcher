@@ -19,15 +19,14 @@ defmodule PlantWatcherWeb.ConnCase do
 
   using do
     quote do
+      use PlantWatcherWeb, :verified_routes
+      import Phoenix.ConnTest
+      import PlantWatcherWeb.ConnCase
+      import Plug.Conn
       # The default endpoint for testing
       @endpoint PlantWatcherWeb.Endpoint
 
-      use PlantWatcherWeb, :verified_routes
-
       # Import conveniences for testing with connections
-      import Plug.Conn
-      import Phoenix.ConnTest
-      import PlantWatcherWeb.ConnCase
     end
   end
 

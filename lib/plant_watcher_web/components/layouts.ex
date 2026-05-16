@@ -43,7 +43,6 @@ defmodule PlantWatcherWeb.Layouts do
       </div>
       <div class="flex-none">
         <ul class="flex flex-column px-1 space-x-4 items-center">
-
           <li>
             <a href="/" class="btn btn-ghost">Home</a>
           </li>
