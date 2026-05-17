@@ -18,12 +18,12 @@ defmodule PlantWatcher.DataCase do
 
   using do
     quote do
-      alias PlantWatcher.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import PlantWatcher.DataCase
+
+      alias PlantWatcher.Repo
     end
   end
 
