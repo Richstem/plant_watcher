@@ -25,11 +25,70 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/plant_watcher"
 import topbar from "../vendor/topbar"
 
+let customHooks = {}
+
+customHooks.LineChart = {
+  mounted() {
+    const ctx = this.el.getContext("2d")
+    
+    this.chart = new window.Chart(ctx, {
+      type: "line",
+      data: { 
+        labels: [], 
+        datasets: [          
+          { label: "Soil Temp (F)", data: [], borderColor: "#fbbf24", tension: 0.3, yAxisID: 'y', pointRadius: 0, pointHoverRadius: 8  },
+          { label: "Moisture", data: [], borderColor: "#60a5fa", tension: 0.3, yAxisID: 'y1', pointRadius: 0, pointHoverRadius: 8 },
+          { label: "Device Temp (F)", data: [], borderColor: "#f87171", tension: 0.3, yAxisID: 'y', pointRadius: 0, pointHoverRadius: 8 },
+        ]
+      },
+      options: { 
+        plugins: {title: {display: true, text: 'Last 6 Hours', font: {size: 24}}},
+        responsive: true, 
+        maintainAspectRatio: false,
+        scales: {
+          y: { 
+            type: 'linear', 
+            display: true, 
+            position: 'left',
+            title: {display: true, text: 'Temperature (°F)'},
+            suggestedMin: 25, 
+            suggestedMax: 110
+          },
+          y1: { 
+            type: 'linear', 
+            display: true, 
+            position: 'right', 
+            title: {display: true, text: "Soil Moisture"},
+            grid: { drawOnChartArea: false },
+            suggestedMin: 150,
+            suggestedMax: 1200
+          }
+        } 
+      }
+    })
+
+    this.handleEvent("load_history", ({ data }) => {
+      // FIX: Clean up raw database strings so the browser sorts them in exact timeline order
+      this.chart.data.labels = data.map(d => {
+        if (!d.time) return ""
+        // Converts "YYYY-MM-DD HH:MM:SS" to "YYYY-MM-DDTHH:MM:SSZ"
+        const cleanIso = d.time.replace(" ", "T")
+        return new Date(cleanIso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+      })
+            
+      this.chart.data.datasets[0].data = data.map(d => d.soil_temp)
+      this.chart.data.datasets[1].data = data.map(d => d.soil_moisture)
+      this.chart.data.datasets[2].data = data.map(d => d.device_temp)
+      this.chart.update()
+    })
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, ...customHooks},
 })
 
 // Show progress bar on live navigation and form submits
