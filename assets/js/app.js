@@ -36,13 +36,16 @@ customHooks.LineChart = {
       data: { 
         labels: [], 
         datasets: [          
-          { label: "Soil Temp (F)", data: [], borderColor: "#fbbf24", tension: 0.3, yAxisID: 'y', pointRadius: 0, pointHoverRadius: 8  },
-          { label: "Moisture", data: [], borderColor: "#60a5fa", tension: 0.3, yAxisID: 'y1', pointRadius: 0, pointHoverRadius: 8 },
-          { label: "Device Temp (F)", data: [], borderColor: "#f87171", tension: 0.3, yAxisID: 'y', pointRadius: 0, pointHoverRadius: 8 },
+          { label: "Soil Temp (F)", data: [], borderColor: "#60a5fa", backgroundColor: "#60a5fa70", tension: 0.3, yAxisID: 'y', pointRadius: 0, pointHoverRadius: 8  },
+          { label: "Moisture", data: [], borderColor: "#16a34a", backgroundColor: "#16a34a70", tension: 0.3, yAxisID: 'y1', pointRadius: 0, pointHoverRadius: 8 },
+          { label: "Device Temp (F)", data: [], borderColor: "#f87171", backgroundColor: "#f8717170", tension: 0.3, yAxisID: 'y', pointRadius: 0, pointHoverRadius: 8 },
         ]
       },
+      
+
       options: { 
         plugins: {title: {display: true, text: 'Last 6 Hours', font: {size: 24}}},
+        
         responsive: true, 
         maintainAspectRatio: false,
         scales: {
@@ -75,7 +78,7 @@ customHooks.LineChart = {
         const cleanIso = d.time.replace(" ", "T")
         return new Date(cleanIso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
       })
-            
+      this.chart.options.plugins.title.text = data[0].time_dif || "Last 6 Hours"
       this.chart.data.datasets[0].data = data.map(d => d.soil_temp)
       this.chart.data.datasets[1].data = data.map(d => d.soil_moisture)
       this.chart.data.datasets[2].data = data.map(d => d.device_temp)

@@ -2,6 +2,7 @@ defmodule PlantWatcherWeb.DeviceChannel do
   use PlantWatcherWeb, :channel
   alias PlantWatcher.Repo
   alias PlantWatcher.DeviceReport
+  alias PlantWatcher.PumpEvent
   require Logger
 
   def join("device:temp", _payload, socket) do
@@ -33,6 +34,42 @@ defmodule PlantWatcherWeb.DeviceChannel do
 
         commit_to_db(report_params)
 
+    {:noreply, socket}
+  end
+
+  # handle and commit successful pump to db
+  def handle_in(
+      "report_successful_pump",
+      %{"status" => "success"},
+      socket
+    ) do
+      now = NaiveDateTime.local_now
+
+      case Repo.insert(%PumpEvent {time: now}) do
+        {:ok, _struct} ->
+          #let's broadcast and flash it to the live-view
+          Phoenix.PubSub.broadcast!(
+              PlantWatcher.PubSub,
+              "successful_pump",
+              {:pump_success, %{time: now}}
+            )
+        {:error, _changeset} ->
+          Phoenix.PubSub.broadcast!(
+              PlantWatcher.PubSub,
+              "successful_pump",
+              {:pump_db_fail, %{time: now}}
+            )
+        end
+      {:noreply, socket}
+    end
+
+  # handle failed pump
+  def handle_in(
+    "report_successful_pump",
+    %{"status" => other_status},
+    socket
+  ) do
+    Logger.error("pump water command failed!, #{other_status}")
     {:noreply, socket}
   end
 

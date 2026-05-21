@@ -13,6 +13,19 @@ defmodule PlantWatcher.CustomGraph do
   end
 
   def get_custom_graph(time_start, time_end) do
+    time_dif_string =
+      case NaiveDateTime.diff(time_end,time_start, :hour) do
+        6 ->
+          "Last 6 Hours"
+        24 ->
+          "Last 24 Hours"
+        168 ->
+          "Last 7 Days"
+        720 ->
+          "Last 30 Days"
+        _ ->
+          "Default"
+      end
     from(g in __MODULE__,
       where: g.bucket >= ^time_start and g.bucket <= ^time_end,
       order_by: [asc: g.bucket]
@@ -23,8 +36,10 @@ defmodule PlantWatcher.CustomGraph do
         time: row.bucket,
         device_temp: row.avg_device_temp,
         soil_temp: row.avg_soil_temp,
-        soil_moisture: row.avg_soil_moisture
+        soil_moisture: row.avg_soil_moisture,
+        time_dif: time_dif_string
       }
     end)
+
   end
 end
