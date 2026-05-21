@@ -1,111 +1,96 @@
 <Layouts.app flash={@flash}>
-  <section>
-    <div class="px-4 py-10">
-      <div class="mx-auto max-w-xl ">
-        <h2 class="text-[2rem] mt-4 mb-4 font-semibold leading-10 tracking-tighter text-balance text-center ">
-          About My Solution
+  <section class="w-full max-w-md sm:max-w-4xl lg:max-w-7xl mx-auto my-6 px-4">
+    <!-- Header Aligned with Dashboard Title Sizing -->
+    <div class="text-center mt-10 mb-12">
+      <h1 class="text-4xl font-bold tracking-tight">About My Solution</h1>
+      <p class="text-md mt-2 opacity-70">Automated environmental monitoring & emergency irrigation</p>
+    </div>
+
+    <!-- Main Grid System matching Dashboard layout structure -->
+    <div class="grid grid-cols-1 gap-8">
+      
+      <!-- Section 1: The Problem / Motivation -->
+      <div class="bg-base-100 dark:bg-gray-800 border border-base-300 dark:border-gray-600 rounded-lg p-6 sm:p-8 shadow-sm">
+        <h2 class="text-2xl font-bold text-green-600 mb-4 border-b border-base-200 dark:border-gray-700 pb-2">
+          Wilted Seedlings — NO MORE!
         </h2>
-        <div class="collapse collapse-arrow bg-base-100 border border-base-300">
-          <input type="radio" name="my-accordion-2" checked="checked" />
-          <div class="collapse-title font-semibold text-xl">
-            Wilted Seedlings -- NO MORE!
+        <div class="space-y-4 text-base leading-relaxed">
+          <div>
+            <h3 class="text-lg font-semibold mb-1 opacity-90">A Travelling (Sometimes Forgetful) Gardener</h3>
+            <p>
+              Every year, without fail, I start a whole bunch of seeds, tend to them in the early stages, and they
+              get big QUICK! Then, I end up either going out of town, or sometimes just forget to look at them for just
+              one single day... and BOOM! Wilted starts, stunted by my accidental neglect!
+            </p>
           </div>
+          <p>
+            This solution helps me when I am forgetful, or unable to water my plants. I have created an automatic emergency
+            watering system for my plant starts that will kick in if the soil gets too dry to sustain my future garden staples.
+          </p>
+        </div>
+      </div>
 
-          <div class="collapse-content text-sm">
-            <section class="max-w-2xl mx-auto p-6 rounded-lg">
-              <!-- Problem Statement -->
-              <div class="mb-8">
-                <h2 class="text-lg font-bold mb-2 ">
-                  A Travelling (Sometimes Forgetful) Gardener
-                </h2>
-                <p class="leading-relaxed">
-                  Every year, without fail, I start a whole bunch of seeds, tend to them in the early stages, and they
-                  get big QUICK! Then, I end up either going out of town, or sometimes just forget to look at them for just
-                  one single day... and BOOM! Wilted starts, stunted by my accidental neglect!
-                </p>
-                <br />
-                <p class="leading-relaxed">
-                  This solution helps me when I am forgetful, or unable to water my plants. I have created an automatic emergency
-                  watering system for my plant starts that will kick in if the soil gets too dry to sustain my future garden staples.
-                </p>
-              </div>
-            </section>
-          </div>
-
-          <div class="collapse collapse-arrow bg-base-100 border border-base-300">
-            <input type="radio" name="my-accordion-2" />
-            <div class="collapse-title font-semibold text-xl">
-              Architecture
-            </div>
-            <div class="collapse-content text-sm">
-              <section class="max-w-2xl mx-auto p-6 rounded-lg">
-                <!-- Server Section -->
-                <div class="mb-8">
-                  <h2 class="text-lg font-bold mb-2 ">Server Configuration</h2>
-                  <p class="leading-relaxed">
-                    This application is hosted on a Beelink mini PC running Linux Ubuntu. It is reverse proxied
+      <!-- Section 2: Architecture Stack -->
+      <div class="bg-base-100 dark:bg-gray-800 border border-base-300 dark:border-gray-600 rounded-lg p-6 sm:p-8 shadow-sm">
+        <h2 class="text-2xl font-bold text-green-600 mb-6 border-b border-base-200 dark:border-gray-700 pb-2">
+          Architecture
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Server Column -->
+          <div class="space-y-2">
+            <h3 class="text-lg font-bold font-mono text-base-content/80">Server Host</h3>
+            <p class="text-sm leading-relaxed opacity-90">
+              This application is hosted on a Beelink mini PC running Linux Ubuntu. It is reverse proxied
                     by an IIS server exposed to the web through a Cloudflare tunnel. This allows me to leverage
                     Cloudflare’s global edge network for SSL termination and DDoS protection. This configuration
                     ensures that even though the app runs on consumer hardware, caching and high availability are
                     enhanced with Cloudflare's tooling.
-                  </p>
-                </div>
-                
-<!-- Phoenix Section -->
-                <div class="mb-8">
-                  <h2 class="text-lg font-bold mb-2">Phoenix Web App</h2>
-                  <p class="leading-relaxed">
-                    To ensure I am able to view and manage the automated plant watering device, I decided to build
+            </p>
+          </div>
+          
+          <!-- Phoenix Column -->
+          <div class="space-y-2">
+            <h3 class="text-lg font-bold font-mono text-green-600">Phoenix Web App</h3>
+            <p class="text-sm leading-relaxed opacity-90">
+              To ensure I am able to view and manage the automated plant watering device, I decided to build
                     a web application that I can access anywhere in the world (as long as I remember to enable
                     the country I'm traveling in on Cloudflare's Dashboard). To see live data from my
-                    device, I am leveraging Phoenix's built-in **LiveView** module to query the status of the various
+                    device, I am leveraging Phoenix's built-in <strong>LiveView</strong> module to query the status of the various
                     sensors and even trigger a watering event with the click of a button.
-                  </p>
-                </div>
-                
-<!-- Nerves Section -->
-                <div class="mb-4">
-                  <h2 class="text-lg font-bold mb-2">Nerves</h2>
-                  <p class="leading-relaxed">
-                    The sensors are connected to a Raspberry Pi Zero W using a **Nerves** application. This allows for a
+            </p>
+          </div>
+          
+          <!-- Nerves Column -->
+          <div class="space-y-2">
+            <h3 class="text-lg font-bold font-mono text-base-content/80">Nerves</h3>
+            <p class="text-sm leading-relaxed opacity-90">
+              The sensors are connected to a Raspberry Pi Zero W using a <strong>Nerves</strong> application. This allows for a
                     resilient system that will self-heal from any crashes with the use of supervision trees provided by
                     Elixir and the BEAM VM.
-                  </p>
-                </div>
-              </section>
-            </div>
-
-            <div class="collapse collapse-arrow bg-base-100 border border-base-300">
-              <input type="radio" name="my-accordion-2" />
-              <div class="collapse-title font-semibold text-xl">
-                Problems I Encountered
-              </div>
-
-              <div class="collapse-content text-sm">
-                <section class="max-w-2xl mx-auto p-6 rounded-lg">
-                  <!-- Problem 1 -->
-                  <div class="mb-8">
-                    <h2 class="text-lg font-bold mb-2 ">
-                      Windows WSL
-                    </h2>
-                    <p class="leading-relaxed">
-                      My initial development was done on WSL with a Windows based laptop. Because of my .Net background, I was
-                      comfortable with the dev environement, and well...it's what I had.
-                    </p>
-                    <br />
-                    <p class="leading-relaxed">
-                      While I was able to get a Pi Zero device running and updating over the air with Nerves, communication with
-                      my Phoenix app was a bit more challenging. While I could certainly make it work, I had an extra mini PC that I'd
-                      been wanting to install Linux on anyways. So that's what I did. Immediately the development experience was improved.
-                      Opening up the application to devices on my LAN was a breeze and everything started to fall into place very nicely.
-                    </p>
-                  </div>
-                </section>
-              </div>
-            </div>
+            </p>
           </div>
         </div>
       </div>
+
+      <!-- Section 3: Development Lessons -->
+      <div class="bg-base-100 dark:bg-gray-800 border border-base-300 dark:border-gray-600 rounded-lg p-6 sm:p-8 shadow-sm">
+        <h2 class="text-2xl font-bold text-green-600 mb-4 border-b border-base-200 dark:border-gray-700 pb-2">
+          Engineering Obstacles
+        </h2>
+        <div class="space-y-4 text-base leading-relaxed">
+          <div>
+            <h3 class="text-lg font-semibold mb-1 opacity-90">Windows WSL Local Networking Constraints</h3>
+            <p>
+              My initial development was done on WSL with a Windows-based laptop. Because of my .NET background, I was comfortable with the dev environment, and well... it's what I had.
+            </p>
+          </div>
+          <p>
+            While I was able to get a Pi Zero device running and updating over-the-air with Nerves, communication with my Phoenix app was challenging over virtual network bridges. Moving to a dedicated Linux environment on an extra mini PC instantly improved the loop. Opening up the application to local network adapters became effortless, letting the device handshakes drop seamlessly into place.
+          </p>
+        </div>
+      </div>
+
     </div>
   </section>
 </Layouts.app>

@@ -5,7 +5,10 @@ defmodule PlantWatcherWeb.TemperatureLive do
   # on mount let's assign a temp value so we know it's awating data
   def mount(_params, _session, socket) do
     # Subscribe to the PubSub topic
-    if connected?(socket), do: Phoenix.PubSub.subscribe(PlantWatcher.PubSub, "temp_updates")
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(PlantWatcher.PubSub, "temp_updates")
+      Phoenix.PubSub.subscribe(PlantWatcher.PubSub, "successful_pump")
+    end
 
     #update_chart_data(socket)
     last_6h = PlantWatcher.LiveGraph.get_last_6h()
@@ -23,6 +26,23 @@ defmodule PlantWatcherWeb.TemperatureLive do
       |> update_chart_data()
 
     {:ok, socket}
+  end
+
+  # Catch PubSub successful_pump topic and flash it
+  def handle_info({:pump_success, data}, socket) do
+    time_string = Calendar.strftime(data.time, "%I:%M:%S %p")
+    socket =
+      socket
+      |> put_flash(:info, "Successfully pumped and logged at #{time_string}")
+    {:noreply, socket}
+  end
+
+  # Catch PubSub successful_pump topic and flash it
+  def handle_info({:pump_db_fail, _data}, socket) do
+    socket =
+      socket
+      |> put_flash(:error, "Successfully pumped but failed to log.")
+    {:noreply, socket}
   end
 
   # Catch the PubSub message sent from the Channel and pass to render fxn
@@ -134,7 +154,7 @@ defmodule PlantWatcherWeb.TemperatureLive do
     <!--Soil temp section -->
           <div class="text-center mt-10">
             <h1 class="text-2xl font-bold">Soil Temperature</h1>
-            <div class="text-6xl mt-4 font-mono text-green-600">
+            <div class="text-6xl mt-4 font-mono text-blue-600">
               {@soil_temp}
             </div>
           </div>
@@ -150,7 +170,7 @@ defmodule PlantWatcherWeb.TemperatureLive do
     <!--Device temp section -->
           <div class="text-center mt-10">
             <h1 class="text-2xl font-bold">Device Temperature</h1>
-            <div class="text-6xl mt-4 font-mono text-green-600">
+            <div class="text-6xl mt-4 font-mono text-red-600">
               {@current_temp}
             </div>
           </div>
